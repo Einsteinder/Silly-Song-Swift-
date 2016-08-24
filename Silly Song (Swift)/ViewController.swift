@@ -16,16 +16,16 @@ extension ViewController: UITextFieldDelegate {
     }
 }
 
-func shortNameForName(fullName: String) -> String {
-    let vowelList = ["a", "e", "i", "o", "u"]
-    if let fistLetter = fullName.characters.first{
-        if (vowelList.contains(String(fistLetter).lowercaseString)){
-            return fullName.lowercaseString
-        }else{
-        }
-    }
-    return fullName.substringFromIndex(fullName.startIndex.successor()).lowercaseString
+func shortNameForName(name: String) -> String {
+    let lowercaseName = name.lowercaseString
+    let vowelSet = NSCharacterSet(charactersInString: "aeiouAEIOU")
     
+    if let firstVowelRange = name.rangeOfCharacterFromSet(vowelSet, options: .CaseInsensitiveSearch) {
+        return lowercaseName.substringFromIndex(firstVowelRange.startIndex)
+    }
+    
+    // No vowels - return the full name
+    return lowercaseName
 }
 
 let bananaFanaTemplate = [
@@ -53,10 +53,6 @@ class ViewController: UIViewController {
         nameField.delegate = self
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
     @IBAction func reset(sender: AnyObject) {
         nameField.text = ""
@@ -64,9 +60,13 @@ class ViewController: UIViewController {
     }
 
     @IBAction func displayLyrics(sender: AnyObject) {
-       // if let name =  {
-            lyricsView.text = lyricsForName(bananaFanaTemplate,fullName:nameField.text!)
-       // }
+        if let name = nameField.text where !name.isEmpty {
+            lyricsView.text = lyricsForName(bananaFanaTemplate,fullName:name)
+        } else {
+            lyricsView.text = "Enter your name"
+        }
+        
+       
         
     }
     
